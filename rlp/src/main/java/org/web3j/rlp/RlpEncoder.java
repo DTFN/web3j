@@ -26,7 +26,7 @@ import static org.web3j.rlp.RlpDecoder.OFFSET_SHORT_STRING;
  */
 public class RlpEncoder {
 
-    public static byte[] encode(RlpType value) {
+    public  static byte[] encode(RlpType value) {
         if (value instanceof RlpString) {
             return encodeString((RlpString) value);
         } else {
@@ -34,7 +34,7 @@ public class RlpEncoder {
         }
     }
 
-    private static byte[] encode(byte[] bytesValue, int offset) {
+    public  static byte[] encode(byte[] bytesValue, int offset) {
         if (bytesValue.length == 1
                 && offset == OFFSET_SHORT_STRING
                 && bytesValue[0] >= (byte) 0x00
@@ -82,14 +82,30 @@ public class RlpEncoder {
         };
     }
 
+    private static int printArray(String source, byte[] array) {
+        System.out.print(source);
+        System.out.print(": ");
+        for (int i=0; i< array.length; i++) {
+            int item = array[i] & 0xff;
+            System.out.print(item);
+            System.out.print(" ");
+        }
+        System.out.println("");
+
+        return 0;
+    }
+
     static byte[] encodeList(RlpList value) {
         List<RlpType> values = value.getValues();
         if (values.isEmpty()) {
             return encode(new byte[] {}, OFFSET_SHORT_LIST);
         } else {
             byte[] result = new byte[0];
+            int i = 1;
             for (RlpType entry : values) {
-                result = concat(result, encode(entry));
+                byte[] tempResult = encode(entry);
+                result = concat(result, tempResult);
+                i++;
             }
             return encode(result, OFFSET_SHORT_LIST);
         }
